@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>What is in an API</title>
+
+    <style>
+        body {
+            min-height: 100vh;
+            background-color: #0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: helvetica;
+        }
+
+        h1, #api-text {
+            width: 80%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Here is an API response</h1>
+
+    <!-- This will eventually be the api/json response text will go -->
+    <div id="api-text">LOADING...</div>
+
+    <script>
+
+        // This says to run this function once the page loads
+        window.onload = function() {
+
+            // Once the page load make the API call
+            httpGetAsync('http://tailgateclub.com/api/vars/husky/school-vars', handleJSONData);
+        };
+
+
+        // This is a reusable function to make a client side API call for json
+        // NOTE: It takes a url string of where the json is
+        // NOTE: It takes a callback which is a function you want to run after the
+        //      json data is returned to your page
+        function httpGetAsync(url, callback) {
+
+            // Initialize a new variable to hold the request
+            let xmlHttp = new XMLHttpRequest();
+
+            // Once the request is ready
+            xmlHttp.onreadystatechange = function() {
+
+                // This is a really fancy way of saying "once javascript has
+                //      read all of the json at the url run my next function"
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                    { callback(xmlHttp.responseText); }
+            }
+
+            // This is how http actually opens files on another machine
+            // AKA HTTP/1 protocol
+            xmlHttp.open("GET", url, true); // true for asynchronous
+            xmlHttp.send(null);
+        }
+
+
+        // This is my function to handle the API data for this specific page
+        function handleJSONData(jsonResponse) {
+
+            // The data comes back as a string and we want it as an object
+            // Since this is json there is a function to help us store the data
+            // that was retruned as an object in a variable
+            let data = JSON.parse(jsonResponse);
+
+
+            // One of the values on this particular json object is 'schoolCopyHTML'
+            // let us save that to a variable also
+            let text = data.schoolCopyHTML;
+
+
+            // Next let us replace the word "LOADING..." with our new text
+            document.getElementById('api-text').innerHTML = text;
+        }
+
+    </script>
+
+</body>
+</html>
